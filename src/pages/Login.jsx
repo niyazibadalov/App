@@ -1,19 +1,19 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 
-export default function Login({ onLogin }) {
+export default function Login() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const { login } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = (e) => {
     e.preventDefault();
     if (username && password) {
       const mockToken = 'mock-jwt-token-12345';
-      localStorage.setItem('token', mockToken);
-      onLogin(mockToken);
+      login(mockToken);
       
-      // Giriş edildikdən sonra inputları sıfırlayırıq
       setUsername('');
       setPassword('');
       

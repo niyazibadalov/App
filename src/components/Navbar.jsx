@@ -1,44 +1,16 @@
-import { NavLink } from 'react-router-dom';
+import { Link } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 
-export default function Navbar({ isAuthenticated }) {
+export default function Navbar() {
+  const { isAuthenticated } = useAuth();
+
   return (
-    <nav style={{ padding: '15px 20px', background: '#2c3e50', display: 'flex', gap: '20px', alignItems: 'center' }}>
-      <NavLink 
-        to="/" 
-        style={({ isActive }) => ({ 
-          color: '#fff', 
-          textDecoration: 'none', 
-          fontWeight: isActive ? 'bold' : 'normal',
-          borderBottom: isActive ? '2px solid #3498db' : 'none'
-        })}
-      >
-        Ana Səhifə
-      </NavLink>
-
+    <nav style={{ padding: '15px', background: '#2c3e50', display: 'flex', gap: '20px' }}>
+      <Link to="/" style={{ color: '#fff', textDecoration: 'none' }}>Ana Səhifə</Link>
       {isAuthenticated ? (
-        <NavLink 
-          to="/dashboard" 
-          style={({ isActive }) => ({ 
-            color: '#fff', 
-            textDecoration: 'none', 
-            fontWeight: isActive ? 'bold' : 'normal',
-            borderBottom: isActive ? '2px solid #3498db' : 'none'
-          })}
-        >
-          Dashboard (Qorunan)
-        </NavLink>
+        <Link to="/dashboard" style={{ color: '#fff', textDecoration: 'none' }}>Dashboard (Qorunan)</Link>
       ) : (
-        <NavLink 
-          to="/login" 
-          style={({ isActive }) => ({ 
-            color: '#fff', 
-            textDecoration: 'none', 
-            fontWeight: isActive ? 'bold' : 'normal',
-            borderBottom: isActive ? '2px solid #3498db' : 'none'
-          })}
-        >
-          Giriş
-        </NavLink>
+        <Link to="/login" style={{ color: '#fff', textDecoration: 'none' }}>Giriş</Link>
       )}
     </nav>
   );

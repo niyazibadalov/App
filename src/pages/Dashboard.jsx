@@ -1,19 +1,19 @@
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 
-export default function Dashboard({ onLogout }) {
+export default function Dashboard() {
+  const { logout } = useAuth();
   const navigate = useNavigate();
 
   const handleLogoutClick = () => {
-    // localStorage-dakı bütün məlumatları (token, istifadəçi adı və s.) tamamilə təmizləyirik
-    localStorage.clear();
-    onLogout();
+    logout();
     navigate('/login');
   };
 
   return (
     <div style={{ padding: '20px' }}>
       <h1>Dashboard (Qorunan Səhifə)</h1>
-      <p>Sessiyanız aktivdir və token `localStorage`-da saxlanılır.</p>
+      <p>Sessiyanız Context + Reducer üzərindən idarə olunur.</p>
       <button 
         onClick={handleLogoutClick} 
         style={{ padding: '10px 20px', cursor: 'pointer', background: '#e74c3c', color: '#fff', border: 'none', borderRadius: '4px' }}
