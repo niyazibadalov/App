@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import ProtectedRoute from './components/ProtectedRoute';
@@ -8,24 +8,29 @@ import Dashboard from './pages/Dashboard';
 import NotFound from './pages/NotFound';
 
 export default function App() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [token, setToken] = useState(null);
 
-  const handleLogin = () => setIsAuthenticated(true);
-  const handleLogout = () => setIsAuthenticated(false);
+  useEffect(() => {
+    const savedToken = localStorage.getItem('token');
+    if (savedToken) {
+      setToken(savedToken);
+    }
+  }, []);
+
+  const handleLogin = (newToken) => setToken(newToken);
+  const handleLogout = () => setToken(null);
 
   return (
     <BrowserRouter>
-      <Navbar isAuthenticated={isAuthenticated} />
+      <Navbar isAuthenticated={!!token} />
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login onLogin={handleLogin} />} />
         
-        {/* Qorunan Route-lar */}
-        <Route element={<ProtectedRoute isAuthenticated={isAuthenticated} />}>
+        <Route element={<ProtectedRoute isAuthenticated={!!token} />}>
           <Route path="/dashboard" element={<Dashboard onLogout={handleLogout} />} />
         </Route>
 
-        {/* 404 Səhifəsi */}
         <Route path="*" element={<NotFound />} />
       </Routes>
     </BrowserRouter>

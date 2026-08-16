@@ -4,14 +4,16 @@ export default function Dashboard({ onLogout }) {
   const navigate = useNavigate();
 
   const handleLogoutClick = () => {
+    // localStorage-dakı bütün məlumatları (token, istifadəçi adı və s.) tamamilə təmizləyirik
+    localStorage.clear();
     onLogout();
-    navigate('/login'); // Çıxış edən kimi avtomatik Login-ə atır
+    navigate('/login');
   };
 
   return (
     <div style={{ padding: '20px' }}>
       <h1>Dashboard (Qorunan Səhifə)</h1>
-      <p>Təbrik edirik! Bu səhifəni yalnız daxil olmuş istifadəçilər görə bilər.</p>
+      <p>Sessiyanız aktivdir və token `localStorage`-da saxlanılır.</p>
       <button 
         onClick={handleLogoutClick} 
         style={{ padding: '10px 20px', cursor: 'pointer', background: '#e74c3c', color: '#fff', border: 'none', borderRadius: '4px' }}
