@@ -1,71 +1,40 @@
-import { useState } from 'react';
+import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from "./AuthContext";
 
 export default function Login() {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [errors, setErrors] = useState({});
+  const { register, handleSubmit, formState: { errors } } = useForm();
   const { login } = useAuth();
   const navigate = useNavigate();
 
-  const validate = () => {
-    const newErrors = {};
-    const trimmedUsername = username.trim();
-
-    // 1. İstifadəçi adı validasiyası
-    if (!trimmedUsername) {
-      newErrors.username = 'İstifadəçi adı boş ola bilməz!';
-    } else if (username.includes(' ')) {
-      newErrors.username = 'İstifadəçi adında boşluq (space) ola bilməz!';
-    } else if (trimmedUsername.length < 3 || trimmedUsername.length > 20) {
-      newErrors.username = 'İstifadəçi adı 3-20 simvol aralığında olmalıdır!';
-    } else if (!/^[a-zA-Z]/.test(trimmedUsername)) {
-      newErrors.username = 'İstifadəçi adı mütləq hərf ilə başlamalıdır!';
-    } else if (!/^[a-zA-Z0-9_-]+$/.test(trimmedUsername)) {
-      newErrors.username = 'İstifadəçi adı yalnız hərf, rəqəm, "_" və "-" simvollarından ibarət ola bilər!';
-    }
-
-    // 2. Şifrə validasiyası
-    if (!password.trim()) {
-      newErrors.password = 'Şifrə boş və ya yalnız boşluqlardan ibarət ola bilməz!';
-    } else if (password.length < 6) {
-      newErrors.password = 'Şifrə ən az 6 simvol olmalıdır!';
-    }
-
-    return newErrors;
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const validationErrors = validate();
-
-    if (Object.keys(validationErrors).length > 0) {
-      setErrors(validationErrors);
-    } else {
-      setErrors({});
-      const mockToken = 'mock-jwt-token-12345';
-      login(mockToken);
-      
-      setUsername('');
-      setPassword('');
-      navigate('/dashboard');
-    }
+  const onSubmit = (data) => {
+    const mockToken = 'mock-jwt-token-12345';
+    login(mockToken);
+    navigate('/dashboard');
   };
 
   return (
     <div style={{ padding: '20px', maxWidth: '400px' }}>
       <h1>Giriş Səhifəsi</h1>
-      <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
+      <form onSubmit={handleSubmit(onSubmit)} style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
+        
+        {/* İstifadəçi adı */}
         <div>
           <input 
             type="text" 
             placeholder="İstifadəçi adı (məs: user_123)" 
-            value={username} 
-            onChange={(e) => {
-              setUsername(e.target.value);
-              if (errors.username) setErrors((prev) => ({ ...prev, username: '' }));
-            }} 
+            {...register("username", {
+              required: 'İstifadəçi adı boş ola bilməz!',
+              validate: {
+                noSpace: (value) => !value.includes(' ') || 'İstifadəçi adında boşluq (space) ola bilməz!',
+                lengthCheck: (value) => {
+                  const trimmed = value.trim();
+                  return (trimmed.length >= 3 && trimmed.length <= 20) || 'İstifadəçi adı 3-20 simvol aralığında olmalıdır!';
+                },
+                startsWithLetter: (value) => /^[a-zA-Z]/.test(value.trim()) || 'İstifadəçi adı mütləq hərf ilə başlamalıdır!',
+                validChars: (value) => /^[a-zA-Z0-9_-]+$/.test(value.trim()) || 'İstifadəçi adı yalnız hərf, rəqəm, "_" və "-" simvollarından ibarət ola bilər!'
+              }
+            })}
             style={{ 
               padding: '8px', 
               width: '100%', 
@@ -75,20 +44,23 @@ export default function Login() {
           />
           {errors.username && (
             <span style={{ color: '#e74c3c', fontSize: '12px', marginTop: '4px', display: 'block' }}>
-              {errors.username}
+              {errors.username.message}
             </span>
           )}
         </div>
 
+        {/* Şifrə */}
         <div>
           <input 
             type="password" 
             placeholder="Şifrə" 
-            value={password} 
-            onChange={(e) => {
-              setPassword(e.target.value);
-              if (errors.password) setErrors((prev) => ({ ...prev, password: '' }));
-            }} 
+            {...register("password", {
+              required: 'Şifrə boş və ya yalnız boşluqlardan ibarət ola bilməz!',
+              minLength: {
+                value: 6,
+                message: 'Şifrə ən az 6 simvol olmalıdır!'
+              }
+            })}
             style={{ 
               padding: '8px', 
               width: '100%', 
@@ -98,7 +70,7 @@ export default function Login() {
           />
           {errors.password && (
             <span style={{ color: '#e74c3c', fontSize: '12px', marginTop: '4px', display: 'block' }}>
-              {errors.password}
+              {errors.password.message}
             </span>
           )}
         </div>
