@@ -1,0 +1,34 @@
+{
+  "posts": [
+    {
+      "id": "1",
+      "title": "HTML və CSS Əsasları",
+      "body": "Veb səhifələrin strukturu və vizual tərtibatı üçün baza bilikləri."
+    },
+    {
+      "id": "2",
+      "title": "JavaScript ES6+ Xüsusiyyətləri",
+      "body": "Arrow functions, destructuring və async/await məntiqi."
+    },
+    {
+      "id": "3",
+      "title": "React State və Props",
+      "body": "Komponentlər arası məlumat ötürülməsi və yerli yaddaş idarəetməsi."
+    },
+    {
+      "id": "4",
+      "title": "Context API və Auth",
+      "body": "Qlobal state vasitəsilə istifadəçi sessiyasının və autentifikasiyanın tənzimlənməsi."
+    },
+    {
+      "id": "5",
+      "title": "Vite və React Layihəsi",
+      "body": "Sürətli frontend tətbiqləri qurmaq üçün Vite freymvorkunun tətbiqi."
+    },
+    {
+      "title": "sssssssss",
+      "body": "Yeni kontent",
+      "id": "d_SAd-z"
+    }
+  ]
+}

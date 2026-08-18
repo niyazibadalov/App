@@ -13,8 +13,11 @@ export default function Dashboard() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetch('https://jsonplaceholder.typicode.com/posts?_limit=5')
-      .then((res) => res.json())
+    fetch('http://localhost:3000/posts')
+      .then((res) => {
+        if (!res.ok) throw new Error('Xəta baş verdi');
+        return res.json();
+      })
       .then((data) => {
         setPosts(data);
         setLoading(false);
@@ -29,26 +32,39 @@ export default function Dashboard() {
     e.preventDefault();
     if (!title.trim()) return;
 
-    const newPost = { id: Date.now(), title, body: 'Yeni kontent' };
+    const newPost = { title, body: 'Yeni kontent' };
     const previousPosts = [...posts];
 
-    setPosts([newPost, ...posts]);
+    const tempId = Date.now().toString();
+    setPosts([{ id: tempId, ...newPost }, ...posts]);
     setTitle('');
 
-    fetch('https://jsonplaceholder.typicode.com/posts', {
+    fetch('http://localhost:3000/posts', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(newPost),
-    }).catch(() => setPosts(previousPosts));
+    })
+      .then((res) => res.json())
+      .then((savedPost) => {
+        setPosts((prev) => prev.map((p) => (p.id === tempId ? savedPost : p)));
+      })
+      .catch(() => {
+        setPosts(previousPosts);
+        alert('Post əlavə edilə bilmədi, json-server-i yoxlayın.');
+      });
   };
 
   const handleDeletePost = (id) => {
     const previousPosts = [...posts];
+
     setPosts(posts.filter((post) => post.id !== id));
 
-    fetch(`https://jsonplaceholder.typicode.com/posts/${id}`, {
+    fetch(`http://localhost:3000/posts/${id}`, {
       method: 'DELETE',
-    }).catch(() => setPosts(previousPosts));
+    }).catch(() => {
+      setPosts(previousPosts);
+      alert('Post silinə bilmədi, json-server-i yoxlayın.');
+    });
   };
 
   const handleLogoutClick = () => {
@@ -60,8 +76,7 @@ export default function Dashboard() {
     <div style={{ fontFamily: 'Segoe UI, Tahoma, Geneva, Verdana, sans-serif', backgroundColor: '#f8f9fa', minHeight: '100vh', padding: '40px 20px' }}>
       <div style={{ maxWidth: '700px', margin: '0 auto', backgroundColor: '#fff', padding: '30px', borderRadius: '12px', boxShadow: '0 4px 12px rgba(0,0,0,0.08)' }}>
         
-        {/* Header Section */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '2px solid #f0f0f0', pb: '15px', marginBottom: '25px' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '2px solid #f0f0f0', paddingBottom: '15px', marginBottom: '25px' }}>
           <h1 style={{ margin: 0, color: '#2c3e50', fontSize: '24px' }}>Dashboard</h1>
           <button 
             onClick={handleLogoutClick} 
@@ -71,14 +86,12 @@ export default function Dashboard() {
           </button>
         </div>
 
-        {/* Error Boundary Section */}
         <div style={{ marginBottom: '30px' }}>
           <ErrorBoundary>
             <BuggyComponent />
           </ErrorBoundary>
         </div>
 
-        {/* CRUD Section */}
         <h2 style={{ color: '#34495e', fontSize: '18px', marginBottom: '15px' }}>CRUD Əməliyyatları (Optimistic UI)</h2>
 
         <form onSubmit={handleAddPost} style={{ display: 'flex', gap: '10px', marginBottom: '25px' }}>
@@ -106,7 +119,7 @@ export default function Dashboard() {
               key={post.id} 
               style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 15px', borderBottom: '1px solid #edf2f7', transition: 'background 0.2s' }}
             >
-              <span style={{ color: '#2d3748', fontSize: '14px', pr: '10px' }}>{post.title}</span>
+              <span style={{ color: '#2d3748', fontSize: '14px', paddingRight: '10px' }}>{post.title}</span>
               <button 
                 onClick={() => handleDeletePost(post.id)} 
                 style={{ padding: '6px 12px', background: '#e74c3c', color: '#fff', border: 'none', borderRadius: '4px', cursor: 'pointer', fontSize: '12px' }}

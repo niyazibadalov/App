@@ -1,9 +1,9 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
 // Features - Auth
 import { AuthProvider } from './features/auth/AuthContext';
 import ProtectedRoute from './features/auth/ProtectedRoute';
-import PublicRoute from './features/auth/PublicRoute'; // Yeni əlavə olunan Guest Guard
+import PublicRoute from './features/auth/PublicRoute'; 
 import Login from './features/auth/Login';
 
 // Features - Dashboard & Home
@@ -24,7 +24,7 @@ export default function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           
-          {/* PublicRoute ilə əhatə olundu ki, login olmuş adam təzədən /login-ə girə bilməsin */}
+          {/* Giriş etməyənlər üçün (PublicRoute) */}
           <Route 
             path="/login" 
             element={
@@ -34,10 +34,12 @@ export default function App() {
             } 
           />
           
+          {/* Yalnız giriş edənlər üçün (ProtectedRoute) */}
           <Route element={<ProtectedRoute />}>
             <Route path="/dashboard" element={<Dashboard />} />
           </Route>
 
+          {/* Səhv ünvan yazıldıqda */}
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>

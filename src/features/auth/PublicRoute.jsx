@@ -1,12 +1,12 @@
-import { Navigate } from "react-router-dom";
+import { Navigate } from 'react-router-dom';
+import { useAuth } from './AuthContext';
 
 export default function PublicRoute({ children }) {
-  const token = localStorage.getItem("token"); // Və ya auth state-dən yoxlayırsan
+  const { isAuthenticated } = useAuth();
 
-  // Əgər istifadəçi artıq daxil olubsa, loginə yox, birbaşa dashboard-a yönləndir
-  if (token) {
+  if (isAuthenticated) {
     return <Navigate to="/dashboard" replace />;
   }
-
+ 
   return children;
 }
